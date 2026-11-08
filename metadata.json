@@ -1,0 +1,6 @@
+{
+  "name": "The Final Countdown – CBSE Class 10 Board Exams 2027",
+  "description": "A cinematic 24/7 livestream countdown screen and nighttime study room environment for the CBSE Class 10 Board Exams 2027 (17 February 2027, 10:30 AM IST).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,39 @@
+name: 24/7 YouTube Live Countdown Stream
+
+on:
+  workflow_dispatch:
+    inputs:
+      stream_url:
+        description: 'Clean 1080p Broadcast URL (defaults to STREAM_URL secret or shared app URL)'
+        required: false
+        default: 'https://ais-pre-76yoaovnseq25tkj6urhpm-940401561773.asia-east1.run.app/?broadcast=1'
+  schedule:
+    # Automatically starts a new cloud stream runner every 5 hours so the 24/7 YouTube stream stays live continuously
+    - cron: '0 */5 * * *'
+
+concurrency:
+  group: youtube-live-countdown-stream
+  cancel-in-progress: false
+
+jobs:
+  stream-to-youtube:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350 # 5 hours 50 minutes (GitHub Actions max job limit is 6 hours)
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Xvfb, Chromium & FFmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb ffmpeg fonts-liberation libnss3 libatk-bridge2.0-0 libdrm2 libxkbcommon0 libgbm1 libasound2t64 || sudo apt-get install -y xvfb ffmpeg fonts-liberation
+
+      - name: Run 1080p YouTube Live Broadcast with Silent AAC Audio
+        env:
+          YOUTUBE_STREAM_KEY: ${{ secrets.YOUTUBE_STREAM_KEY }}
+          STREAM_URL: ${{ github.event.inputs.stream_url || secrets.STREAM_URL || 'https://ais-pre-76yoaovnseq25tkj6urhpm-940401561773.asia-east1.run.app/?broadcast=1' }}
+          STREAM_DURATION_SECONDS: 19800
+        run: |
+          chmod +x ./scripts/stream-to-youtube.sh
+          ./scripts/stream-to-youtube.sh
